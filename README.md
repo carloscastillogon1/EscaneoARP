@@ -59,7 +59,7 @@ Ejecute con los privilegios necesarios para el acceso a paquetes de bajo nivel. 
 la configuración de seguridad de macOS, es posible que se necesiten permisos adicionales de
 captura de paquetes o de red.
 
-## Usage
+## Uso
 
 Escaneo único:
 
