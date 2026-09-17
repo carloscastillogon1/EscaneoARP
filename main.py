@@ -119,7 +119,7 @@ def run_scan(
     vendor_api: bool,
 ) -> int:
     observations = scanner.scan(subnet)
-    LOGGER.info("ARP scan completed: %d device(s) observed", len(observations))
+    LOGGER.info("Escaneo de ARP completado: %d dispositivo(s) observado(s)", len(observations))
 
     new_count = 0
 
