@@ -88,7 +88,7 @@ def lookup_vendor(
         )
 
     if locally_administered:
-        # Check the configurable map first, then label as privacy/local.
+        # Revisa primero el mapa configurable, luego etiquétalo como privacidad/local.
         vendor = COMMON_OUIS.get(normalized[:8], "Locally administered / possible privacy MAC")
         if vendor == "Locally administered / possible privacy MAC":
             return VendorInfo(
@@ -128,7 +128,7 @@ def lookup_vendor(
                         is_broadcast_or_multicast=False,
                     )
         except requests.RequestException:
-            # Vendor lookup should never make the network scan fail.
+           # La búsqueda de proveedor nunca debería hacer que la exploración de la red falle.
             pass
 
     return VendorInfo(
