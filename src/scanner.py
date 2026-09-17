@@ -21,19 +21,19 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ScanError(RuntimeError):
-    """Raised when an ARP scan cannot be completed."""
+    """Se lanza cuando no se puede completar un escaneo ARP."""
 
 
 @dataclass(frozen=True)
 class DeviceObservation:
-    """One IP/MAC pair observed during an ARP sweep."""
+    """Un par IP/MAC observado durante un barrido ARP."""
 
     ip: str
     mac: str
 
 
 class ARPScanner:
-    """Perform ARP discovery against a single IPv4 subnet."""
+    """Realiza el descubrimiento ARP en una única subred IPv4."""
 
     def __init__(
         self,
@@ -43,11 +43,11 @@ class ARPScanner:
         packet_batch_size: int = 1024,
     ) -> None:
         if timeout <= 0:
-            raise ValueError("timeout must be > 0")
+            raise ValueError("timeout debe ser > 0")
         if retry < 0:
-            raise ValueError("retry must be >= 0")
+            raise ValueError("retry debe ser >= 0")
         if packet_batch_size <= 0:
-            raise ValueError("packet_batch_size must be > 0")
+            raise ValueError("packet_batch_size debe ser > 0")
 
         self.interface = interface
         self.timeout = timeout
@@ -59,10 +59,10 @@ class ARPScanner:
         try:
             network = ipaddress.ip_network(subnet, strict=False)
         except ValueError as exc:
-            raise ValueError(f"Invalid subnet: {subnet}") from exc
+            raise ValueError(f"Subred inválida: {subnet}") from exc
 
         if network.version != 4:
-            raise ValueError("LAN-Guardian currently supports IPv4 ARP scanning only.")
+            raise ValueError("LAN-Guardian actualmente solo admite escaneo ARP IPv4.")
         return network
 
     @staticmethod
@@ -75,10 +75,11 @@ class ARPScanner:
             yield hosts[index : index + self.packet_batch_size]
 
     def scan(self, subnet: str) -> list[DeviceObservation]:
-        """Return unique IP/MAC observations for *subnet*.
+        """Devuelve observaciones únicas de IP/MAC para la *subnet* especificada.
 
-        ARP is link-local. Do not expect this method to discover hosts beyond
-        the Layer-2 broadcast domain or across routed boundaries.
+        El protocolo ARP es de enlace local (link-local). No espere que este método
+        descubra hosts más allá del dominio de difusión de Capa 2 o a través de
+        límites enrutados.
         """
         network = self._validate_subnet(subnet)
 
@@ -118,16 +119,16 @@ class ARPScanner:
 
         except PermissionError as exc:
             raise ScanError(
-                "Insufficient privileges to send ARP frames. "
-                "Run with appropriate raw-socket/network capabilities."
+                "Privilegios insuficientes para enviar tramas ARP. "
+                "Ejecute con las capacidades de red o socket de bajo nivel apropiadas."
             ) from exc
         except OSError as exc:
             raise ScanError(
-                f"Network interface/raw-socket error on {active_iface!r}: {exc}"
+                f"Error en la interfaz de red o socket de bajo nivel en {active_iface!r}: {exc}"
             ) from exc
-        except Exception as exc:  # Scapy can surface platform-specific exceptions.
-            LOGGER.exception("Unexpected ARP scan failure")
-            raise ScanError(f"ARP scan failed: {exc}") from exc
+        except Exception as exc:  # Scapy puede arrojar excepciones específicas de la plataforma.
+            LOGGER.exception("Falla inesperada en el escaneo ARP")
+            raise ScanError(f"El escaneo ARP falló: {exc}") from exc
 
         return sorted(
             observations.values(),
